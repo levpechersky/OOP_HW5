@@ -39,4 +39,25 @@ private:
 };
 
 
+/* Receives cell type, List of BoardCells (should contain at least 1 cell of given CellType).
+ * Returns list after moving a car of given CellType forward by amount cells. */
+template<CellType, typename List, int amount>
+struct moveForward;
+
+template<CellType type, typename... Cells, int amount>
+struct moveForward<type, List<Cells...>, amount> {
+	typedef List<Cells...> list;
+	static constexpr int car_start = FindFirst<type, list>::index;
+	static constexpr int car_end = list::size - FindFirst<type, typename Reverse<list>::list>::index;
+	typedef typename SubList<list, 0, car_start>::list                 before_car;
+	typedef typename SubList<list, car_start, car_end>::list           car;
+	typedef typename SubList<list, car_end, car_end + amount>::list    way_to_go;
+	typedef typename SubList<list, car_end + amount, list::size>::list rest;
+
+	typedef typename ConcatAll<before_car, way_to_go, car, rest>::list result;
+
+};
+
+
+
 #endif /* PART2_MOVEVEHICLE_H_ */

@@ -147,6 +147,112 @@ static void gameBoardAtTest() {
 	static_assert(cmp<GameBoardAt<board2x3, 2, 1>::cell, BoardCell<EMPTY, UP, 0>>::value, "GameBoardAt Fail");
 }
 
+static void takeDropListTest() {
+	typedef List<Int<1>, Int<2>, Int<3>, Int<4>, Int<5>> test_list;
+
+	typedef typename Take<3, test_list>::list list123;
+	static_assert(list123::size == 3, "List::Drop Fail");
+	static_assert(cmp<GetAtIndex<0, list123>::value, Int<1>>::value, "List::Drop Fail");
+	static_assert(cmp<GetAtIndex<1, list123>::value, Int<2>>::value, "List::Drop Fail");
+	static_assert(cmp<GetAtIndex<2, list123>::value, Int<3>>::value, "List::Drop Fail");
+
+	typedef typename Drop<2, test_list>::list list345;
+	static_assert(list345::size == 3, "List::Take Fail");
+	static_assert(cmp<GetAtIndex<0, list345>::value, Int<3>>::value, "List::Take Fail");
+	static_assert(cmp<GetAtIndex<1, list345>::value, Int<4>>::value, "List::Take Fail");
+	static_assert(cmp<GetAtIndex<2, list345>::value, Int<5>>::value, "List::Take Fail");
+
+	typedef typename Drop<1,  test_list>::list list2345;
+	typedef typename Take<2, list2345>::list list23;
+	static_assert(list345::size == 3, "List::Take Fail");
+	static_assert(cmp<GetAtIndex<0, list23>::value, Int<2>>::value, "List::DropTake Fail");
+	static_assert(cmp<GetAtIndex<1, list23>::value, Int<3>>::value, "List::DropTake Fail");
+
+
+	typedef typename Take<4, test_list>::list list1234;
+	typedef typename Drop<1,  list1234>::list list234;
+	static_assert(list345::size == 3, "List::Take Fail");
+	static_assert(cmp<GetAtIndex<0, list234>::value, Int<2>>::value, "List::TakeDrop Fail");
+	static_assert(cmp<GetAtIndex<1, list234>::value, Int<3>>::value, "List::TakeDrop Fail");
+	static_assert(cmp<GetAtIndex<2, list234>::value, Int<4>>::value, "List::TakeDrop Fail");
+
+	Take<1, List<Int<1>>>::list m1; (void)m1;
+	Drop<1, List<Int<1>>>::list m2; (void)m2;
+	Take<0, List<Int<1>>>::list m3; (void)m3;
+	Drop<0, List<Int<1>>>::list m4; (void)m4;
+	Take<0, List<>>::list       m5; (void)m5;
+	Drop<0, List<>>::list       m6; (void)m6;
+}
+
+static void sublistTest() {
+	typedef List<Int<1>, Int<2>, Int<3>, Int<4>, Int<5>, Int<6>> test_list;
+
+	typedef typename SubList<test_list, 2, 4>::list list345;
+	static_assert(list345::size == 2, "List::SubList Fail");
+	static_assert(cmp<GetAtIndex<0, list345>::value, Int<3>>::value, "List::SubList Fail");
+	static_assert(cmp<GetAtIndex<1, list345>::value, Int<4>>::value, "List::SubList Fail");
+
+	typedef typename SubList<test_list, 0, 2>::list list123;
+	static_assert(list123::size == 2, "List::SubList Fail");
+	static_assert(cmp<GetAtIndex<0, list123>::value, Int<1>>::value, "List::SubList Fail");
+	static_assert(cmp<GetAtIndex<1, list123>::value, Int<2>>::value, "List::SubList Fail");
+
+	typedef typename SubList<test_list, 3, 6>::list list456;
+	static_assert(list456::size == 3, "List::SubList Fail");
+	static_assert(cmp<GetAtIndex<0, list456>::value, Int<4>>::value, "List::SubList Fail");
+	static_assert(cmp<GetAtIndex<1, list456>::value, Int<5>>::value, "List::SubList Fail");
+	static_assert(cmp<GetAtIndex<2, list456>::value, Int<6>>::value, "List::SubList Fail");
+}
+
+static void concatTest() {
+	typedef List<Int<1>, Int<2>, Int<3>, Int<4>, Int<5>, Int<6>> list123456;
+	typedef List<Int<1>, Int<2>, Int<3>> list123;
+	typedef List<Int<4>, Int<5>, Int<6>> list456;
+
+	typedef Concat<list123, list456>::list result;
+	static_assert(result::size == 6, "List::Concat Fail");
+	static_assert(cmp<list123456, result>::value, "List::Concat Fail");
+
+	typedef Concat<list456, list123>::list list456123;
+	static_assert(result::size == 6, "List::SubList Fail");
+	static_assert(cmp<GetAtIndex<0, list456123>::value, Int<4>>::value, "List::Concat Fail");
+	static_assert(cmp<GetAtIndex<1, list456123>::value, Int<5>>::value, "List::Concat Fail");
+	static_assert(cmp<GetAtIndex<2, list456123>::value, Int<6>>::value, "List::Concat Fail");
+	static_assert(cmp<GetAtIndex<3, list456123>::value, Int<1>>::value, "List::Concat Fail");
+	static_assert(cmp<GetAtIndex<4, list456123>::value, Int<2>>::value, "List::Concat Fail");
+	static_assert(cmp<GetAtIndex<5, list456123>::value, Int<3>>::value, "List::Concat Fail");
+
+	Concat<List<Int<1>>, List<>>::list m1; (void)m1;
+	Concat<List<>, List<Int<1>>>::list m2; (void)m2;
+	Concat<List<>, List<>>::list       m3; (void)m3;
+
+	typedef List<Int<1>, Int<2>> list12;
+	typedef List<Int<3>, Int<4>> list34;
+	typedef List<Int<5>, Int<6>> list56;
+	static_assert(cmp<ConcatAll<list12, list34, list56>::list, list123456>::value, "ConcatAll Fail");
+}
+
+static void reverseTest() {
+	typedef List<Int<1>, Int<2>, Int<3>> list123;
+	typedef List<Int<4>, Int<5>, Int<6>> list456;
+
+	typedef List<Int<3>, Int<2>, Int<1>> list321;
+	typedef List<Int<6>, Int<5>, Int<4>> list654;
+	static_assert(cmp<Reverse<list123>::list, list321>::value, "Reverse Fail");
+	static_assert(cmp<Reverse<list456>::list, list654>::value, "Reverse Fail");
+}
+
+static void moveForwardTest() {
+	typedef List < BoardCell< EMPTY , RIGHT , 3>, BoardCell< X , RIGHT , 2>, BoardCell< X , LEFT , 2>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< O , UP , 3>, BoardCell< EMPTY , RIGHT , 0> > list;
+	typedef typename moveForward<X, list, 1>::result res;
+
+	typedef List < BoardCell< EMPTY , RIGHT , 3>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< X , RIGHT , 2>, BoardCell< X , LEFT , 2>, BoardCell< O , UP , 3>, BoardCell< EMPTY , RIGHT , 0> > expected;
+	Printer<list>::print(std::cout);
+	Printer<res>::print(std::cout);
+	Printer<expected>::print(std::cout);
+	//static_assert(cmp<res, expected>::value, "moveForward Fail");
+}
+
 //#define TEST_COMPILATION_ERRORS // Uncomment to test error cases.
 #ifdef TEST_COMPILATION_ERRORS
 
@@ -191,8 +297,14 @@ int main(){
 	gameBoardFieldsTest();
 	moveFieldsTest();
 
+
 	getCoordinatesTest();
 	gameBoardAtTest();
+	takeDropListTest();
+	sublistTest();
+	concatTest();
+	reverseTest();
+	moveForwardTest();
 
 #ifdef TEST_COMPILATION_ERRORS
 

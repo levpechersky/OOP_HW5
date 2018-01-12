@@ -9,8 +9,9 @@ enum Direction {
 };
 
 
-/* Car facing some direction can move only that way, or the opposite, but not sideways.
- * Returns true, if car facing direction d1 can move in direction d2.
+/* Car facing some direction can move only that way, or the opposite, but not sideways (that's why parallel parking is so hard).
+ * So we define directions as 'compactible', if car facing direction d1 can move in direction d2 (and vice versa).
+ * Returns true, if directions d1 and d2 are compactible.
  */
 template<Direction d1, Direction d2>
 struct CompactibleDirections;
