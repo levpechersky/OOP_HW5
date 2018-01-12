@@ -28,4 +28,22 @@ struct GameBoard<List<List<Cell>>> {
 };
 
 
+
+
+template<typename Board, int row, int col>
+struct GameBoardAt;
+
+template<typename... T, typename... Cells, int row, int col>
+struct GameBoardAt<GameBoard<List<List<Cells...>, T...>>, row, col> {
+private:
+	typedef typename GameBoard<List<List<Cells...>, T...>>::board list_of_lists;
+	typedef typename GetAtIndex<row, List<List<Cells...>, T...>>::value row_list;
+public:
+	typedef typename GetAtIndex<col, row_list>::value cell;
+};
+
+
+
+
+
 #endif /* PART2_GAMEBOARD_H_ */

@@ -39,7 +39,7 @@ static void boardExample() {
 
 	static_assert(List<BoardCell< EMPTY , RIGHT , 0>,BoardCell< EMPTY , RIGHT , 0>,BoardCell< EMPTY , RIGHT , 0>>::size == 3, "Fail");
     static_assert(List<>::size == 0, "Fail");
-    typedef MoveVehicle<gameBoard, 2, 3, LEFT, 2>::board b1; // Valid move
+    //typedef MoveVehicle<gameBoard, 2, 3, LEFT, 2>::board b1; // Valid move
     static_assert(CheckSolution<gameBoard, moves>::result, "Fail"); // Game should be solved
 }
 
@@ -124,21 +124,61 @@ static void getCoordinatesTest() {
 			List< BoardCell<EMPTY, UP, 0>, BoardCell<EMPTY, UP, 0>>
 		> list2x3;
 
-	static_assert(GetCoordinates<X, list2x3>::col == 0, "Fail");
 	static_assert(GetCoordinates<X, list2x3>::row == 1, "Fail");
+	static_assert(GetCoordinates<X, list2x3>::col == 0, "Fail");
 
-	static_assert(GetCoordinates<A, list2x3>::col == 1, "Fail");
 	static_assert(GetCoordinates<A, list2x3>::row == 1, "Fail");
+	static_assert(GetCoordinates<A, list2x3>::col == 1, "Fail");
 
-	static_assert(GetCoordinates<A, list2x3>::col == 1, "Fail");
 	static_assert(GetCoordinates<A, list2x3>::row == 1, "Fail");
+	static_assert(GetCoordinates<A, list2x3>::col == 1, "Fail");
 }
 
-// #define TEST_COMPILATION_ERRORS // uncomment to test error cases. Every case must fail!
+static void gameBoardAtTest() {
+	typedef List<
+			List< BoardCell<EMPTY, UP, 0>, BoardCell<EMPTY, UP, 0>>,
+			List< BoardCell<X, RIGHT, 1>,  BoardCell<A, UP, 1>>,
+			List< BoardCell<EMPTY, UP, 0>, BoardCell<EMPTY, UP, 0>>
+		> list2x3;
+	typedef GameBoard<list2x3> board2x3;
+
+	static_assert(cmp<GameBoardAt<board2x3, 1, 1>::cell, BoardCell<A, UP, 1>>::value, "GameBoardAt Fail");
+	static_assert(cmp<GameBoardAt<board2x3, 1, 0>::cell, BoardCell<X, RIGHT, 1>>::value, "GameBoardAt  Fail");
+	static_assert(cmp<GameBoardAt<board2x3, 2, 1>::cell, BoardCell<EMPTY, UP, 0>>::value, "GameBoardAt Fail");
+}
+
+//#define TEST_COMPILATION_ERRORS // Uncomment to test error cases.
 #ifdef TEST_COMPILATION_ERRORS
 
+/* Expect to get "required from here" on every line, which creates some object.                    */
+/* Note: casting variables to void suppresses unused variables warnings, that's the only purpose.  */
+
 static void moveCannotBeEmptyTest() {
-	static_assert(Move<EMPTY, DOWN, 3>::type == EMPTY, "Move Fail");
+	Move<EMPTY, DOWN, 3> m; (void)m;
+}
+
+static void moveVehicleErrorsTest() {
+	typedef List<
+			List< BoardCell<EMPTY, UP, 0>, BoardCell<EMPTY, UP, 0>>,
+			List< BoardCell<X, RIGHT, 1>,  BoardCell<A, UP, 1>>,
+			List< BoardCell<EMPTY, UP, 0>, BoardCell<EMPTY, UP, 0>>
+		> list2x3;
+	typedef GameBoard<list2x3> board2x3;
+
+	// index out of bounds:
+	MoveVehicle<board2x3, -1,  1, LEFT, 1>m1; (void)m1;
+	MoveVehicle<board2x3,  1, -1, LEFT, 1>m2; (void)m2;
+	MoveVehicle<board2x3,  3,  1, LEFT, 1>m3; (void)m3;
+	MoveVehicle<board2x3,  1,  2, LEFT, 1>m4; (void)m4;
+
+	// move empty cell:
+	MoveVehicle<board2x3, 0,  0, RIGHT, 1>m10; (void)m10;
+
+	// move in bad direction (sideways)
+	MoveVehicle<board2x3, 1, 0, UP,    1>m21; (void)m21;
+	MoveVehicle<board2x3, 1, 0, DOWN,  1>m22; (void)m22;
+	MoveVehicle<board2x3, 1, 1, LEFT,  1>m23; (void)m23;
+	MoveVehicle<board2x3, 1, 1, RIGHT, 1>m24; (void)m24;
 }
 
 #endif
@@ -152,10 +192,12 @@ int main(){
 	moveFieldsTest();
 
 	getCoordinatesTest();
+	gameBoardAtTest();
 
 #ifdef TEST_COMPILATION_ERRORS
 
 	moveCannotBeEmptyTest();
+	moveVehicleErrorsTest();
 
 #endif
 
