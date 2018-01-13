@@ -12,21 +12,23 @@ struct BoardCell {
 	static constexpr int  length = Length;
 };
 
-
-/* Receives BoardCell and CellType, and checks whether a cell is of given type.
- * @field result - true if a cell is of given type.
+/**
+ * Checks whether <Cell> is of <type>.
+ * @tparam Cell - BoardCell<...>
+ * @tparam type - cell type
+ * @return ::value - true if a cell is of given type.
  */
 template <typename Cell, CellType type>
 struct CellHasType;
 
 template <CellType boardCellType, Direction d, int i, CellType type>
 struct CellHasType<BoardCell<boardCellType, d, i>, type> {
-	static constexpr bool result = false;
+	static constexpr bool value = false;
 };
 
 template <Direction d, int i, CellType type>
 struct CellHasType<BoardCell<type, d, i>, type> {
-	static constexpr bool result = true;
+	static constexpr bool value = true;
 };
 
 

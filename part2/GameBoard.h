@@ -27,9 +27,13 @@ struct GameBoard<List<List<Cell>>> {
 	static constexpr int length = 1;
 };
 
-
-
-
+/**
+ * Get a BoardCell at given coordinates.
+ * @tparam Board - GameBoard<...>
+ * @tparam row
+ * @tparam col
+ * @return ::cell
+ */
 template<typename Board, int row, int col>
 struct GameBoardAt;
 
@@ -41,8 +45,6 @@ private:
 public:
 	typedef typename GetAtIndex<col, row_list>::value cell;
 };
-
-
 
 
 

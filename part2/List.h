@@ -1,6 +1,7 @@
 #ifndef PART2_LIST_H_
 #define PART2_LIST_H_
 
+/* A list of types */
 template<typename... TT>
 struct List;
 
@@ -16,10 +17,97 @@ struct List<> {
 	static constexpr int size = 0;
 };
 
-
-
-template<typename Type, typename List>
+/**
+ * Insert <type> as first element of <list>.
+ * @tparam type - any type
+ * @tparam list - any type
+ * @Return ::list - resulting list
+ */
+template<typename type, typename list>
 struct PrependList;
+
+/**
+ * Return an element at <index>
+ * @tparam index
+ * @tparam list - List<...>
+ * @Return ::value - a type at <index>
+ */
+template<int index, typename list>
+struct GetAtIndex;
+
+/**
+ * Update <element> at <index>
+ * @tparam index
+ * @tparam element - element to insert
+ * @tparam list - List<...>
+ * @Return ::list - updated list
+ */
+template<int index, typename element, typename list>
+struct SetAtIndex;
+
+/**
+ * Returns list, containing <amount> first elements of <list> (prefix list)
+ * @tparam amount
+ * @tparam list
+ * @return ::list - prefix list
+ */
+template<int amount, typename list>
+struct Take;
+
+/**
+ * Returns list, without <amount> first elements of <list> (suffix list)
+ * @tparam amount
+ * @tparam list
+ * @return ::list - suffix list
+ */
+template<int amount, typename list>
+struct Drop;
+
+/**
+ * Return sub-list (like substring of string), [from, to)
+ * i.e including <from>, not including <to>, that is SubList<L, 0, list::size> == L
+ * @tparam list - original list
+ * @tparam from - start index (included)
+ * @tparam to - end index (not included)
+ * @return ::list - sublist
+ */
+template<typename list, int from, int to>
+struct SubList;
+
+/**
+ * Concatenate lists.
+ * Concatenating 2 empty lists results in empty list.
+ * @tparam list1 - List<...>
+ * @tparam list2 - List<...>
+ * @return ::list
+ */
+template<typename list1, typename list2>
+struct Concat;
+
+/**
+ * Concatenate any number of lists.
+ * Example: ConcatAll<list1, list2, list3, list4>::list
+ * @tparam list1 - List<...>
+ * @tparam list2 - List<...>
+ * @return ::list
+ */
+template<typename... lists>
+struct ConcatAll;
+
+/**
+ * Reverse list.
+ * @tparam list - List<...>
+ * @return ::list
+ */
+template<typename list>
+struct Reverse;
+
+
+
+/*====================================================================================================================*/
+/*====================================================================================================================*/
+
+
 
 template<typename T>
 struct PrependList<T, List<>> {
@@ -38,9 +126,6 @@ struct PrependList<T, List<Rest...>> {
 
 
 
-template<int, typename>
-struct GetAtIndex;
-
 template<typename Head>
 struct GetAtIndex<0, List<Head>> {
 	typedef Head value;
@@ -57,10 +142,6 @@ struct GetAtIndex<index, List<Head, Rest...>> {
 };
 
 
-
-
-template<int, typename, typename>
-struct SetAtIndex;
 
 template<typename Element, typename Head>
 struct SetAtIndex<0, Element, List<Head>> {
@@ -79,9 +160,6 @@ struct SetAtIndex<index, Element, List<Head, Rest...>> {
 
 
 
-template<int, typename>
-struct Take;
-
 template<>
 struct Take<0, List<>> {
 	typedef List<> list;
@@ -89,6 +167,11 @@ struct Take<0, List<>> {
 
 template<typename Head>
 struct Take<0, List<Head>> {
+	typedef List<> list;
+};
+
+template<typename Head, typename... Rest>
+struct Take<0, List<Head, Rest...>> {
 	typedef List<> list;
 };
 
@@ -103,9 +186,6 @@ struct Take<index, List<Head, Rest...>> {
 };
 
 
-
-template<int, typename>
-struct Drop;
 
 template<>
 struct Drop<0, List<>> {
@@ -123,9 +203,6 @@ struct Drop<amount, List<Head, Rest...>> {
 };
 
 
-/* Return sub-list (like substring of string), half open: [) */
-template<typename, int, int>
-struct SubList;
 
 template<typename H, typename... TT, int from, int to>
 struct SubList<List<H, TT...>, from, to> {
@@ -134,9 +211,6 @@ struct SubList<List<H, TT...>, from, to> {
 };
 
 
-/* Concatenate lists */
-template<typename, typename>
-struct Concat;
 
 template<typename... T, typename... R>
 struct Concat<List<T...>, List<R...>> {
@@ -144,9 +218,6 @@ struct Concat<List<T...>, List<R...>> {
 };
 
 
-/* Concatenate lists */
-template<typename...>
-struct ConcatAll;
 
 template<>
 struct ConcatAll<> {
@@ -160,9 +231,6 @@ struct ConcatAll<L, R...> {
 
 
 
-template<typename>
-struct Reverse;
-
 template<>
 struct Reverse<List<>> {
 	typedef List<> list;
@@ -172,7 +240,6 @@ template<typename  Head, typename... Tail>
 struct Reverse<List<Head, Tail...>> {
 	typedef typename Concat<typename Reverse<List<Tail...>>::list, List<Head>>::list list;
 };
-
 
 
 

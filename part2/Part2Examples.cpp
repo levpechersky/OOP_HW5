@@ -25,12 +25,12 @@ using namespace classesForTesting;
 
 static void boardExample() {
 	typedef GameBoard< List<
-	        List < BoardCell< EMPTY , RIGHT , 1>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< O , DOWN , 3>, BoardCell< EMPTY , RIGHT , 0> >,
-	        List < BoardCell< EMPTY , RIGHT , 2>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< A , RIGHT , 2>, BoardCell< A , LEFT , 2>, BoardCell< O , DOWN , 3>, BoardCell< EMPTY , RIGHT , 0> >,
-	        List < BoardCell< EMPTY , RIGHT , 3>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< X , RIGHT , 2>, BoardCell< X , LEFT , 2>, BoardCell< O , UP , 3>, BoardCell< EMPTY , RIGHT , 0> >,
+	        List < BoardCell< EMPTY , RIGHT , 1>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< O , DOWN , 3>,      BoardCell< EMPTY , RIGHT , 0> >,
+	        List < BoardCell< EMPTY , RIGHT , 2>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< A , RIGHT , 2>,     BoardCell< A , LEFT , 2>,      BoardCell< O , DOWN , 3>,      BoardCell< EMPTY , RIGHT , 0> >,
+	        List < BoardCell< EMPTY , RIGHT , 3>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< X , RIGHT , 2>,     BoardCell< X , LEFT , 2>,      BoardCell< O , UP , 3>,        BoardCell< EMPTY , RIGHT , 0> >,
 	        List < BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0> >,
-	        List < BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< B , DOWN , 2>, BoardCell< P , RIGHT , 3>, BoardCell< P , RIGHT , 3>, BoardCell< P , LEFT , 3> >,
-	        List < BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< B , UP , 2>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< C , RIGHT , 2>, BoardCell< C , LEFT , 2> >
+	        List < BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< B , DOWN , 2>,      BoardCell< P , RIGHT , 3>,     BoardCell< P , RIGHT , 3>,     BoardCell< P , LEFT , 3> >,
+	        List < BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< B , UP , 2>,        BoardCell< EMPTY , RIGHT , 0>, BoardCell< C , RIGHT , 2>,     BoardCell< C , LEFT , 2> >
 	> > gameBoard;
 
 	typedef List<
@@ -39,8 +39,21 @@ static void boardExample() {
 
 	static_assert(List<BoardCell< EMPTY , RIGHT , 0>,BoardCell< EMPTY , RIGHT , 0>,BoardCell< EMPTY , RIGHT , 0>>::size == 3, "Fail");
     static_assert(List<>::size == 0, "Fail");
-    //typedef MoveVehicle<gameBoard, 2, 3, LEFT, 2>::board b1; // Valid move
+
+    typedef MoveVehicle<gameBoard, 2, 3, LEFT, 2>::board b1; // Valid move
+    Printer<b1>::print(std::cout);
+
     static_assert(CheckSolution<gameBoard, moves>::result, "Fail"); // Game should be solved
+
+    Printer<gameBoard>::print(std::cout);
+    typedef DoMove<gameBoard, Move < B, UP,   1 >>::result b01;    Printer<b01>::print(std::cout);
+    typedef DoMove<b01,       Move < C, LEFT, 4 >>::result b02;    Printer<b02>::print(std::cout);
+    typedef DoMove<b02,       Move < A, LEFT, 2 >>::result b03;    Printer<b03>::print(std::cout);
+    typedef DoMove<b03,       Move < X, LEFT, 2 >>::result b04;    Printer<b04>::print(std::cout);
+    typedef DoMove<b04,       Move < B, UP,   3 >>::result b05;    Printer<b05>::print(std::cout);
+    typedef DoMove<b05,       Move < P, LEFT, 3 >>::result b06;    Printer<b06>::print(std::cout);
+    typedef DoMove<b06,       Move < O, DOWN, 3 >>::result b07;    Printer<b07>::print(std::cout);
+    static_assert(CheckWin<b07>::result, "Fail"); // Game should be solved
 }
 
 static void listTest() {
@@ -242,15 +255,22 @@ static void reverseTest() {
 	static_assert(cmp<Reverse<list456>::list, list654>::value, "Reverse Fail");
 }
 
-static void moveForwardTest() {
-	typedef List < BoardCell< EMPTY , RIGHT , 3>, BoardCell< X , RIGHT , 2>, BoardCell< X , LEFT , 2>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< O , UP , 3>, BoardCell< EMPTY , RIGHT , 0> > list;
-	typedef typename moveForward<X, list, 1>::result res;
+static void moveForwardBackwardTest() {
+	typedef List <
+			BoardCell< EMPTY , RIGHT , 3>, BoardCell< X , RIGHT , 2>, BoardCell< X , LEFT , 2>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< O , UP , 3>, BoardCell< EMPTY , RIGHT , 0>
+		> list;
 
-	typedef List < BoardCell< EMPTY , RIGHT , 3>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< X , RIGHT , 2>, BoardCell< X , LEFT , 2>, BoardCell< O , UP , 3>, BoardCell< EMPTY , RIGHT , 0> > expected;
-	Printer<list>::print(std::cout);
-	Printer<res>::print(std::cout);
-	Printer<expected>::print(std::cout);
-	//static_assert(cmp<res, expected>::value, "moveForward Fail");
+	typedef typename MoveForward<X, list, 1>::result res_fw;
+	typedef List <
+			BoardCell< EMPTY , RIGHT , 3>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< X , RIGHT , 2>, BoardCell< X , LEFT , 2>, BoardCell< O , UP , 3>, BoardCell< EMPTY , RIGHT , 0>
+		> expected_fw;
+	static_assert(cmp<res_fw, expected_fw>::value, "MoveForward Fail");
+
+	typedef typename MoveBackward<X, list, 1>::result res_back;
+	typedef List <
+			BoardCell< X , RIGHT , 2>, BoardCell< X , LEFT , 2>, BoardCell< EMPTY , RIGHT , 3>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< O , UP , 3>, BoardCell< EMPTY , RIGHT , 0>
+		> expected_back;
+	static_assert(cmp<res_back, expected_back>::value, "MoveBackward Fail");
 }
 
 //#define TEST_COMPILATION_ERRORS // Uncomment to test error cases.
@@ -304,7 +324,7 @@ int main(){
 	sublistTest();
 	concatTest();
 	reverseTest();
-	moveForwardTest();
+	moveForwardBackwardTest();
 
 #ifdef TEST_COMPILATION_ERRORS
 
