@@ -8,8 +8,18 @@
 
 template<typename T>
 class Observer {
+private:
+	int _id;
+	static int counter;
 public:
-	void handleEvent(const T&) = 0;
-}
+	Observer() {
+		_id = counter++;
+	}
+	bool operator==(const Observer<T>& b) { return _id == b._id; }
+	virtual void handleEvent(const T& message) = 0;
+};
+
+template<typename T>
+int Observer<T>::counter = 0;
 
 #endif

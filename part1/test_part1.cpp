@@ -1,4 +1,3 @@
-#include <stdio>
 #include <iostream>
 #include "Observer.h"
 #include "Subject.h"
@@ -12,11 +11,11 @@ private:
 	}
 public:
 	ObserverTest(int id) { _id = id; }
-	void handleEvent(int message) {
+	void handleEvent(const int& message) {
 		this->PrintMessage(message);
 	}
-}
-class SubjectTest  : public Subject<int> { }
+};
+class SubjectTest  : public Subject<int> { };
 
 bool testAddRemove() {
 	SubjectTest subj1;
@@ -105,10 +104,10 @@ bool testMultipleNotifications() {
 	SubjectTest subj1, subj2, subj3, subj4;
 	ObserverTest tester1(1), tester2(2), tester3(3), tester4(4);
 	try {
-		(((subj1 += tester1) += tester2) += tester3 += tester4);
-		(((subj2 += tester1) += tester2) += tester3 += tester4);
-		(((subj3 += tester1) += tester2) += tester3 += tester4);
-		(((subj4 += tester1) += tester2) += tester3 += tester4);
+		((((subj1 += tester1) += tester2) += tester3) += tester4);
+		((((subj2 += tester1) += tester2) += tester3) += tester4);
+		((((subj3 += tester1) += tester2) += tester3) += tester4);
+		((((subj4 += tester1) += tester2) += tester3) += tester4);
 		subj1(10);
 		subj2(20);
 		subj3(30);
