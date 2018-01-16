@@ -104,14 +104,14 @@ bool testMultipleNotifications() {
 	SubjectTest subj1, subj2, subj3, subj4;
 	ObserverTest tester1(1), tester2(2), tester3(3), tester4(4);
 	try {
-		((((subj1 += tester1) += tester2) += tester3) += tester4);
-		((((subj2 += tester1) += tester2) += tester3) += tester4);
-		((((subj3 += tester1) += tester2) += tester3) += tester4);
-		((((subj4 += tester1) += tester2) += tester3) += tester4);
-		subj1(10);
-		subj2(20);
-		subj3(30);
-		subj4(40);
+		(((subj1 += tester1) += tester2) += tester3) += tester4;
+		(((subj2 += tester1) += tester2) += tester3) += tester4;
+		(((subj3 += tester1) += tester2) += tester3) += tester4;
+		(((subj4 += tester1) += tester2) += tester3) += tester4;
+		(subj1(10))(100);
+		(subj1(20))(200);
+		(subj1(30))(300);
+		(subj1(40))(400);
 		return true;
 	} catch(...) {
 		return false;
@@ -206,3 +206,48 @@ int main() {
 	}
 	std::cout << "All tests run. Check printed messages!!!" << std::endl;
 }
+
+/*
+	Expected Output:
+
+	Observer #1 has received message: 5
+	Observer #1 has received message: 8
+	Observer #2 has received message: 8
+	Observer #3 has received message: 8
+	Observer #4 has received message: 8
+	Observer #1 has received message: 7
+	Observer #1 has received message: 10
+	Observer #2 has received message: 10
+	Observer #3 has received message: 10
+	Observer #4 has received message: 10
+	Observer #1 has received message: 100
+	Observer #2 has received message: 100
+	Observer #3 has received message: 100
+	Observer #4 has received message: 100
+	Observer #1 has received message: 20
+	Observer #2 has received message: 20
+	Observer #3 has received message: 20
+	Observer #4 has received message: 20
+	Observer #1 has received message: 200
+	Observer #2 has received message: 200
+	Observer #3 has received message: 200
+	Observer #4 has received message: 200
+	Observer #1 has received message: 30
+	Observer #2 has received message: 30
+	Observer #3 has received message: 30
+	Observer #4 has received message: 30
+	Observer #1 has received message: 300
+	Observer #2 has received message: 300
+	Observer #3 has received message: 300
+	Observer #4 has received message: 300
+	Observer #1 has received message: 40
+	Observer #2 has received message: 40
+	Observer #3 has received message: 40
+	Observer #4 has received message: 40
+	Observer #1 has received message: 400
+	Observer #2 has received message: 400
+	Observer #3 has received message: 400
+	Observer #4 has received message: 400
+	All tests run. Check printed messages!!!
+
+*/

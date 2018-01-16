@@ -5,6 +5,7 @@
 #include "OOP5EventException.h"
 #include <list>
 #include <algorithm>
+#include <iostream>
 
 /*
 	Class for defining a subject that multiple Observers will
@@ -51,15 +52,15 @@ public:
 		}
 		throw ObserverUnknownToSubject();
 	}
-	Subject<T> operator+=(Observer<T>& observer) {
+	Subject<T>& operator+=(Observer<T>& observer) {
 		this->addObserver(observer);
 		return *this;
 	}
-	Subject<T> operator-=(Observer<T>& observer) {
+	Subject<T>& operator-=(Observer<T>& observer) {
 		this->removeObserver(observer);
 		return *this;
 	}
-	Subject<T> operator()(const T& message) {
+	Subject<T>& operator()(const T& message) {
 		notify(message);
 		return *this;
 	}
